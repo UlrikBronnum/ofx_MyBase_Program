@@ -10,6 +10,7 @@ class ofx_Greyscale : public ofx_Filter
         ofx_Greyscale(){
             possible_commands.push_back("greyscale");
             possible_commands.push_back("greyscale_from_channel");
+            possible_commands.push_back("HSB");
 
             title = "Greyscale";
         }
@@ -19,6 +20,7 @@ class ofx_Greyscale : public ofx_Filter
 
         void greyscale(unsigned char* input);
         void greyscale_from_channel(unsigned char* input);
+        void HSB(unsigned char* input);
 
     protected:
 

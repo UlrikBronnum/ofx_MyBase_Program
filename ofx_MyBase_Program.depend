@@ -1478,7 +1478,7 @@
 	"ofCamera.h"
 	"ofEvents.h"
 
-1426873718 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofapp.h
+1427234125 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofapp.h
 	"ofMain.h"
 	<string>
 	"ofx_Button.h"
@@ -1488,7 +1488,7 @@
 	"ofx_Layer.h"
 	"ofxQtVideoSaver.h"
 
-1426681387 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menu.h
+1427223327 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menu.h
 	"ofMain.h"
 	"ofx_Color.h"
 	"ofx_Placement.h"
@@ -1510,10 +1510,10 @@
 	"ofx_Placement.h"
 	"ofMain.h"
 
-1426875251 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_program.h
+1426983769 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_program.h
 	<ofx_App.h>
 
-1426792957 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_app.h
+1427223478 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_app.h
 	"ofMain.h"
 	"ofx_Button.h"
 	"ofx_Slider.h"
@@ -1523,35 +1523,44 @@
 	"ofx_MenuSub.h"
 	"ofx_Placement.h"
 
-1426491856 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_smenu.h
+1427223478 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_smenu.h
 	"ofx_Color.h"
 	"ofx_Placement.h"
 	"ofx_Slider.h"
 	"ofMain.h"
 
-1426875241 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_loader.h
+1427223178 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_loader.h
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+	<stdexcept>
+	<windows.h>
+	"dirent.h"
 	"ofMain.h"
 
-1426798578 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menusub.h
+1427223327 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menusub.h
 	"ofMain.h"
 	"ofx_Color.h"
 	"ofx_Placement.h"
 	"ofx_Button.h"
 	"ofx_Menu.h"
 
-1426784604 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_layer.h
+1427225799 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_layer.h
 	"ofMain.h"
 	"ofx_Image.h"
 	"ofx_Filter.h"
 	"ofx_Point_Processing.h"
 	"ofx_Neighborhood_Processing.h"
+	"ofx_Blur.h"
+	"ofx_Edge_Detection.h"
 	"ofx_Greyscale.h"
 	"ofx_Normal_Map.h"
 	"ofx_Menu.h"
 	"ofx_MenuSub.h"
 	"ofx_Histogram.h"
 
-1426723117 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_image.h
+1427225799 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_image.h
 	"ofMain.h"
 	"ofx_Placement.h"
 
@@ -1567,10 +1576,10 @@
 1426493529 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_neighborhood_processing.h
 	<ofx_Filter.h>
 
-1423997056 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_greyscale.h
+1427211945 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_greyscale.h
 	<ofx_Filter.h>
 
-1426775097 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_normal_map.h
+1427232332 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_normal_map.h
 	<ofx_Filter.h>
 
 1424989000 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_histogram.h
@@ -1580,34 +1589,34 @@
 	"ofQtUtils.h"
 	"ofUtils.h"
 
-1426871812 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_app.cpp
+1426953430 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_app.cpp
 	"ofx_App.h"
 
-1423071692 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_button.cpp
+1427153773 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_button.cpp
 	"ofx_Button.h"
 
-1426783922 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_greyscale.cpp
+1427225982 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_greyscale.cpp
 	"ofx_Greyscale.h"
 
-1426782118 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_layer.cpp
+1427226039 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_layer.cpp
 	"ofx_Layer.h"
 
-1426494712 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menu.cpp
+1427121828 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menu.cpp
 	"ofx_Menu.h"
 
-1426864458 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menusub.cpp
+1427122678 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_menusub.cpp
 	"ofx_MenuSub.h"
 
-1426708969 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_neighborhood_processing.cpp
+1427226081 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_neighborhood_processing.cpp
 	"ofx_Neighborhood_Processing.h"
 
-1426778602 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_normal_map.cpp
+1427232494 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_normal_map.cpp
 	"ofx_Normal_Map.h"
 
-1426709215 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_point_processing.cpp
+1427226135 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_point_processing.cpp
 	"ofx_Point_Processing.h"
 
-1426877267 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_program.cpp
+1427235329 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_program.cpp
 	"ofx_Program.h"
 
 1426491842 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_slider.cpp
@@ -1619,7 +1628,7 @@
 1426621143 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofxqtvideosaver.cpp
 	"ofxQtVideoSaver.h"
 
-1426877141 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofapp.cpp
+1427303602 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofapp.cpp
 	"ofApp.h"
 
 1426720928 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_canvas.cpp
@@ -1627,10 +1636,22 @@
 
 1426721190 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_canvas.h
 
-1426858544 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_icons.h
+1426993412 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_icons.h
 	"ofx_Placement.h"
 	"ofMain.h"
 
-1426860151 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_icons.cpp
+1426993154 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_icons.cpp
 	"ofx_Icons.h"
+
+1427209480 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_blur.h
+	<ofx_Filter.h>
+
+1427225925 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_blur.cpp
+	"ofx_Blur.h"
+
+1427210407 d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_edge_detection.h
+	<ofx_Filter.h>
+
+1427232816 source:d:\openframeworks\apps\myapps\ofx_mybase_program\src\ofx_edge_detection.cpp
+	"ofx_Edge_Detection.h"
 

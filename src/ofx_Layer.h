@@ -7,6 +7,8 @@
 #include "ofx_Filter.h"
 #include "ofx_Point_Processing.h"
 #include "ofx_Neighborhood_Processing.h"
+#include "ofx_Blur.h"
+#include "ofx_Edge_Detection.h"
 #include "ofx_Greyscale.h"
 #include "ofx_Normal_Map.h"
 
@@ -19,7 +21,9 @@ class ofx_Layer
 {
     public:
         ofx_Layer(){}
-        virtual ~ofx_Layer(){}
+        virtual ~ofx_Layer(){
+            Delete_Filters ();
+        }
 
         void setup(int image_width, int image_height, int button_width, int button_height, string layer_type);
         void reset(int image_width, int image_height);
@@ -45,9 +49,9 @@ class ofx_Layer
 
         unsigned char* Get_Image(){
             if(Canvas_Storage.empty()){
-                return Base_Image.image;
+                return Base_Image.Get_Image();
             }else{
-                return Canvas_Storage[Canvas_Storage.size()-1]->image;
+                return Canvas_Storage[Canvas_Storage.size()-1]->Get_Image();
             }
         }
 
@@ -78,15 +82,41 @@ class ofx_Layer
             return str;
         }
 
-
     protected:
+
+        void Delete_Filters (){
+            for(int i = 0; i < Canvas_Storage.size() ; i++){
+                delete Canvas_Storage[i];
+            }
+            Canvas_Storage.clear();
+        }
 
         void set_sub_menu(string filter_types)
         {
             int menus_added = 0;
             program_menu.setup(button_w,button_h,button_w,button_h);
-            if(filter_types == "diffuse" || filter_types == "height"){
+            if(filter_types == "height"){
                 ofx_Point_Processing tmp;
+                program_menu.add_button(tmp.title);
+                vector <string> com = tmp.possible_commands;
+                com.pop_back();
+                program_menu.add_sub_menu(com,false,menus_added);
+                menus_added++;
+            }
+            if(filter_types == "diffuse"){
+                ofx_Point_Processing tmp;
+                program_menu.add_button(tmp.title);
+                program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
+                menus_added++;
+            }
+            if(filter_types == "diffuse" || filter_types == "normal" || filter_types == "height"){
+                ofx_Blur tmp;
+                program_menu.add_button(tmp.title);
+                program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
+                menus_added++;
+            }
+            if(filter_types == "height"){
+                ofx_Edge_Detection tmp;
                 program_menu.add_button(tmp.title);
                 program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
                 menus_added++;
@@ -96,14 +126,13 @@ class ofx_Layer
                 program_menu.add_button(tmp.title);
                 program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
                 menus_added++;
-            }*/
+            }
             if(filter_types == "diffuse" || filter_types == "normal" || filter_types == "height"){
                 ofx_Neighborhood_Processing tmp;
                 program_menu.add_button(tmp.title);
                 program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
                 menus_added++;
             }
-            /*
             if(filter_types == "normal"){
                 ofx_Normal_Map tmp;
                 program_menu.add_button(tmp.title);

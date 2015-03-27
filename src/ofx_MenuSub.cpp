@@ -33,6 +33,13 @@ void ofx_MenuSub::add_sub_menu (vector<string> sub_titles , bool is_a_switch,int
         }
     }
 }
+void ofx_MenuSub::add_sub_menu (vector<string> sub_titles , bool is_a_switch,int index, int button_width,int button_height){
+    if(index > -1 && index < Menu_Subs.size()){
+        for(int i = 0; i < sub_titles.size() ; i++){
+            Menu_Subs[index]->add_button(sub_titles[i],is_a_switch,button_width,button_height);
+        }
+    }
+}
 void ofx_MenuSub::reset_sub_menu (vector<string> sub_titles, int index){
     Menu_Subs[index]->Reset_Menu(sub_titles);
 }
@@ -71,20 +78,25 @@ void ofx_MenuSub::draw (int x , int y , unsigned char color, int window_w, int w
 }
 
 //------------------------ Mouse Interaction ------------------------
-int ofx_MenuSub::mouse_click (int x , int y){
+bool ofx_MenuSub::mouse_click (int x , int y){
     int state = Menu_Main.Menu_State();
-    bool test_main = true;
+
     if(state != -1 && state < Menu_Subs.size() ){
-        Menu_Subs[state]->mouse_click(x,y);
-        int s_state = Menu_Subs[state]->Menu_State();
-        if(s_state != -1){
-            test_main = false;
+        if(Menu_Subs[state]->Button_Count() != 0){
+            if(Menu_Subs[state]->mouse_click(x,y) ){
+                int s_state = Menu_Subs[state]->Menu_State();
+                return true;
+            }else{
+                if(Menu_Main.mouse_click(x,y)){return true;}
+            }
+        }else{
+            if(Menu_Main.mouse_click(x,y)){return true;}
         }
-    }
-    if(test_main){
-        Menu_Main.mouse_click(x,y);
+    }else{
+        if(Menu_Main.mouse_click(x,y)){return true;}
     }
 
+    return false;
 }
 void ofx_MenuSub::mouse_hover (int x , int y){
     int state = Menu_Main.Menu_State();

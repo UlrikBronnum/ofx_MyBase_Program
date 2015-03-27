@@ -11,11 +11,15 @@
 #include "ofx_MenuSub.h"
 #include "ofx_Placement.h"
 
+#define program_version "version_1.0"
+
 class ofx_App : public ofx_Loader , public ofx_Placement
 {
     public:
         ofx_App() : ofx_Loader () , ofx_Placement () {}
-        virtual ~ofx_App() {}
+        virtual ~ofx_App() {
+            Delete_App_Content();
+        }
 
 
         //------------------------- Setup -----------------------------------
@@ -72,7 +76,21 @@ class ofx_App : public ofx_Loader , public ofx_Placement
         void Set_Sub_Menu(ofx_MenuSub* newMenu){
             _Program_Menu_Content[2] = newMenu;
         }
+        void Reset_Menu(){
+            Program_Menu.Reset_Menu();
+            if(program_state != -1){_Program_Menu_Content[program_state]->Reset_Menu();  }
+            program_state = -1;
+            menu_state = -1;
+            sub_state = -1;
+            program_string = "";
+        }
 
+        void Delete_App_Content(){
+            for(int i = 0; i < _Program_Menu_Content.size() ; i++){
+                delete _Program_Menu_Content[i];
+            }
+            _Program_Menu_Content.clear();
+        }
 
     protected:
 
@@ -82,6 +100,8 @@ class ofx_App : public ofx_Loader , public ofx_Placement
 
         int                    program_state, menu_state, sub_state ;
         string                 program_string;
+
+        bool                   show_subs;
 
 
         void create_program_menu(vector<string> titles){
@@ -96,9 +116,7 @@ class ofx_App : public ofx_Loader , public ofx_Placement
         }
         void create_sub_menu(string title, vector<string> sub_titles , int index ){
             int button_index = _Program_Menu_Content[index]->add_button(title);
-            cout << "button_index: " << button_index << endl;
             _Program_Menu_Content[index]->add_sub_menu(sub_titles,false,button_index);
-            cout << "_Program_Menu_Content: " << _Program_Menu_Content.size() << endl;
         }
 
 

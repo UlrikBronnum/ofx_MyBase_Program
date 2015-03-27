@@ -12,7 +12,9 @@ class ofx_MenuSub : public ofx_Placement
 {
     public:
         ofx_MenuSub() : ofx_Placement(){}
-        virtual ~ofx_MenuSub(){}
+        virtual ~ofx_MenuSub(){
+            Delete_Sub_Menus ();
+        }
 
 
 
@@ -23,6 +25,8 @@ class ofx_MenuSub : public ofx_Placement
 
 
         void add_sub_menu (vector<string> sub_titles , bool is_a_switch,int index);
+        void add_sub_menu (vector<string> sub_titles , bool is_a_switch,int index,int button_width,int button_height);
+
         void set_sub_menu (ofx_Menu* tmp ,int index){
             ofx_Menu* old = Menu_Subs[index];
             Menu_Subs[index] = tmp;
@@ -45,7 +49,7 @@ class ofx_MenuSub : public ofx_Placement
         void draw (int x , int y , unsigned char color, int window_w, int window_h);
 
         //------------------------ Mouse Interaction ------------------------
-        int mouse_click (int x , int y);
+        bool mouse_click (int x , int y);
         void mouse_hover (int x , int y);
         bool mouse_drag (int x , int y);
 
@@ -78,7 +82,7 @@ class ofx_MenuSub : public ofx_Placement
                 if(indexsub != -1){
                     return Menu_Subs[index]->Button_String(indexsub);
                 }else{
-                    return Menu_Main.Button_String(index);
+                    return Menu_Main.Button_String();
                 }
             }else{
                 return "";
@@ -102,6 +106,13 @@ class ofx_MenuSub : public ofx_Placement
                 return Menu_Subs[index]->Button_Count();
             }
             return -1;
+        }
+
+        void Delete_Sub_Menus (){
+            for(int i = 0; i < Menu_Subs.size() ; i++){
+                delete Menu_Subs[i];
+            }
+            Menu_Subs.clear();
         }
     protected:
 

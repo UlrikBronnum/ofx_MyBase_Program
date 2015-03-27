@@ -36,10 +36,15 @@ void ofx_Button::draw (int x , int y, ofx_Color color){
     ofRect( x + 1, y + 1, object_width - 2, object_height - 2);
 
     ofSetColor(255 - color.r,255 - color.g,255 - color.b);
+    int char_count = object_width / 9;
 	stringstream button_label;
-	button_label  << label << endl;
-	ofDrawBitmapString(button_label.str(),object_x + object_height/2 - 2,  object_y + object_height/2+5);
+	if(label.size() > char_count){
+        button_label  << label.substr(0,char_count) << ".." << endl;
+	}else{
+        button_label  << label.substr(0,char_count) << endl;
+	}
 
+	ofDrawBitmapString(button_label.str(),object_x + object_height/2 - 2,  object_y + object_height/2+5);
 }
 //-------------------------------------------------------------------
 void ofx_Button::draw (int x , int y, unsigned char color){
@@ -61,8 +66,14 @@ void ofx_Button::draw (int x , int y, unsigned char color){
     ofRect( x + 1, y + 1, object_width - 2, object_height - 2);
 
     ofSetColor(255 - color);
+	int char_count = object_width / 9;
 	stringstream button_label;
-	button_label  << label << endl;
+	if(label.size() > char_count){
+        button_label  << label.substr(0,char_count) << "..." << endl;
+	}else{
+        button_label  << label.substr(0,char_count) << endl;
+	}
+
 	ofDrawBitmapString(button_label.str(),object_x + object_height/2 - 2,  object_y + object_height/2+5);
 
 }

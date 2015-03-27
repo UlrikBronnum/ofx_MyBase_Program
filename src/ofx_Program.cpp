@@ -47,6 +47,7 @@ void ofx_Program::setup (){
     _Program_Menu_Content[1]->add_sub_menu(labels,false,0);
 
     labels.clear();
+    labels.push_back("Set save folder");
     _Program_Menu_Content[1]->add_button("Properties");
     _Program_Menu_Content[1]->add_sub_menu(labels,false,1);
 
@@ -61,7 +62,7 @@ void ofx_Program::setup (){
 	labels.push_back("Program Info");
 
     _Program_Menu_Content[3]->add_button("Introduction");
-    _Program_Menu_Content[3]->add_sub_menu(labels,false,0);
+    _Program_Menu_Content[3]->add_sub_menu(tmp,false,0);
 	_Program_Menu_Content[3]->add_button("Qeustionnaire");
     _Program_Menu_Content[3]->add_sub_menu(labels,false,1);
     _Program_Menu_Content[3]->add_button("Program Info");

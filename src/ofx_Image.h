@@ -9,8 +9,14 @@
 class ofx_Image : public ofx_Placement
 {
     public:
-        ofx_Image() : ofx_Placement(){}
-        virtual ~ofx_Image() {}
+        ofx_Image() : ofx_Placement(){
+            image = NULL;
+        }
+        virtual ~ofx_Image() {
+            if (image !=  NULL) {
+                delete [] image;
+            }
+        }
 
 
         virtual void setup(int width, int height, string type){
@@ -35,7 +41,11 @@ class ofx_Image : public ofx_Placement
         }
         virtual void update(ofx_Image* base_image){ }
 
-        unsigned char*  image;
+
+
+        unsigned char* Get_Image(){
+            return image;
+        }
 
         short Image_Channel_Count(){
             return channels;
@@ -43,6 +53,7 @@ class ofx_Image : public ofx_Placement
 
     protected:
 
+        unsigned char*  image;
         short           channels;
 
 

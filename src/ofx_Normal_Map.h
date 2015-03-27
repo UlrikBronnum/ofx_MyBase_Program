@@ -13,7 +13,10 @@ class ofx_Normal_Map : public ofx_Filter
             title = "Normal_map";
             refs_set = false;
         }
-        virtual ~ofx_Normal_Map(){}
+        virtual ~ofx_Normal_Map(){
+            delete [] s_image;
+            delete [] t_image;
+        }
 
         void reset(int width, int height){
 
@@ -33,6 +36,7 @@ class ofx_Normal_Map : public ofx_Filter
         void S_function( float scalar);
         void T_function( float scalar);
         void N_function();
+
 
         int* s_image;
         int* t_image;

@@ -13,7 +13,7 @@
 #include "ofxQtVideoSaver.h"
 
 #define program_version "version_1.0"
-#define record FALSE
+#define my_record FALSE
 
 
 class ofApp : public ofBaseApp , public ofx_Loader {
@@ -34,15 +34,20 @@ class ofApp : public ofBaseApp , public ofx_Loader {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+
+        void load_dragInfo_file(string filename);
+        void load_dragInfo_folder(string foldername);
 		void save_image(int layer_number);
 		void load_image(string filename);
+		void find_drives();
+		void reset_layers();
+
 
 		unsigned char* create_diffuse(unsigned char* image ,int w ,int h );
 		unsigned char* create_height(unsigned char* image,int w ,int h);
 		unsigned char* create_normal(unsigned char* image,int w ,int h);
         unsigned char* greyscale2rgb(unsigned char* image,int w ,int h);
 
-		void reset_layers();
 
 
 
@@ -60,6 +65,8 @@ class ofApp : public ofBaseApp , public ofx_Loader {
 
         ofx_Button back_button;
         bool load_external_file;
+        bool set_save_folder;
+
 
         ofImage system_ref_image;
         vector<ofx_Icons*> system_icons;
@@ -67,9 +74,11 @@ class ofApp : public ofBaseApp , public ofx_Loader {
         vector<ofx_Layer*> Image_Layers;
         vector<int>        save_counter;
 
+        vector<string>     available_drives;
 
-        int mouse_x;
-        int mouse_y;
+
+        int my_mouse_x;
+        int my_mouse_y;
 
         int Window_Width;
         int Window_Height;
@@ -86,5 +95,6 @@ class ofApp : public ofBaseApp , public ofx_Loader {
         ofxQtVideoSaver save_webcam_window;
 
         ofFile Log;
+        string save_counter_str;
 
 };

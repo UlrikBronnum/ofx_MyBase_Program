@@ -15,17 +15,21 @@ class ofx_Menu : public ofx_Placement
     public:
         //----------------- Constructor/Deconstructor -----------------------
         ofx_Menu() : ofx_Placement(){}
-        virtual ~ofx_Menu(){}
+        virtual ~ofx_Menu(){
+            Delete_Menu ();
+        }
 
         //------------------------- Setup -----------------------------------
         void setup (int button_width,int button_height, bool vertical_menu , bool sub_menus_to_display)
         {
             object_width = button_width;
             object_height = button_height;
+            original_width = button_width;
+            original_height = button_height;
 
             vertical = vertical_menu;
 
-            has_sub_menus = sub_menus_to_display;
+            //has_sub_menus = sub_menus_to_display;
 
             menu_state = -1;
         }
@@ -34,6 +38,11 @@ class ofx_Menu : public ofx_Placement
         void add_button(string button_label,bool is_a_switch){
             ofx_Button* tmp = new ofx_Button();
             tmp->setup(object_width,object_height,button_label,is_a_switch);
+            _Menu_Buttons.push_back(tmp);
+        }
+         void add_button(string button_label,bool is_a_switch,int button_width,int button_height){
+            ofx_Button* tmp = new ofx_Button();
+            tmp->setup(button_width,button_width,button_label,is_a_switch);
             _Menu_Buttons.push_back(tmp);
         }
 
@@ -111,12 +120,25 @@ class ofx_Menu : public ofx_Placement
             }
             return "";
         }
+        string Button_String(){
+            if(menu_state != -1 && menu_state < _Menu_Buttons.size()){
+               return _Menu_Buttons[menu_state]->Return_Label();
+            }
+            return "";
+        }
         void Set_Button_String(int index, string new_label){
             _Menu_Buttons[index]->Set_Label(new_label);
         }
 
         int Button_Count(){
             return _Menu_Buttons.size();
+        }
+
+        void Delete_Menu (){
+            for(int i = 0; i < _Menu_Buttons.size() ; i++){
+                delete _Menu_Buttons[i];
+            }
+            _Menu_Buttons.clear();
         }
 
     protected:
@@ -128,7 +150,10 @@ class ofx_Menu : public ofx_Placement
 
         bool                vertical;
 
-        bool                has_sub_menus;
+        int                 original_width;
+        int                 original_height;
+
+        //bool                has_sub_menus;
 
     private:
 };

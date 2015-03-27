@@ -11,7 +11,9 @@ class ofx_SMenu : public ofx_Placement
 {
     public:
         ofx_SMenu(){}
-        virtual ~ofx_SMenu(){}
+        virtual ~ofx_SMenu(){
+            Delete_Sliders();
+        }
 
         //------------------------- Setup -----------------------------------
         void setup (int slider_width,int slider_height)
@@ -59,6 +61,13 @@ class ofx_SMenu : public ofx_Placement
         vector<ofx_Slider*> _Menu_Sliders;
 
     protected:
+
+        void Delete_Sliders(){
+            for(int i = 0; i < _Menu_Sliders.size() ; i++){
+                delete _Menu_Sliders[i];
+            }
+            _Menu_Sliders.clear();
+        }
 
         bool send_data;
 

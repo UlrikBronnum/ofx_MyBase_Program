@@ -133,11 +133,15 @@
 		<Unit filename="src/ofxQtVideoSaver.h" />
 		<Unit filename="src/ofx_App.cpp" />
 		<Unit filename="src/ofx_App.h" />
+		<Unit filename="src/ofx_Blur.cpp" />
+		<Unit filename="src/ofx_Blur.h" />
 		<Unit filename="src/ofx_Button.cpp" />
 		<Unit filename="src/ofx_Button.h" />
 		<Unit filename="src/ofx_Canvas.cpp" />
 		<Unit filename="src/ofx_Canvas.h" />
 		<Unit filename="src/ofx_Color.h" />
+		<Unit filename="src/ofx_Edge_Detection.cpp" />
+		<Unit filename="src/ofx_Edge_Detection.h" />
 		<Unit filename="src/ofx_Filter.h" />
 		<Unit filename="src/ofx_Greyscale.cpp" />
 		<Unit filename="src/ofx_Greyscale.h" />

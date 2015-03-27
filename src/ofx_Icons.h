@@ -12,6 +12,7 @@ class ofx_Icons: public ofx_Placement
         virtual ~ofx_Icons(){}
 
         void load(string file_name);
+        void load(unsigned char* pixels, int w , int h);
         void draw(int x, int y);
         void resize_icon(int w, int h);
 

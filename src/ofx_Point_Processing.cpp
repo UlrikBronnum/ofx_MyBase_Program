@@ -4,29 +4,29 @@ void ofx_Point_Processing::apply_filter(ofx_Image* input){
     if(update_needed){
         if(input->Image_Channel_Count() == 3){
             if(command == "brightness"){
-                brightness_rgb(input->image);
+                brightness_rgb(input->Get_Image());
             }else if(command == "contrast"){
-                contrast_rgb(input->image);
+                contrast_rgb(input->Get_Image());
             }else if(command == "gamma"){
-                gamma_rgb(input->image);
+                gamma_rgb(input->Get_Image());
             }else if(command == "invert"){
-                invert_rgb(input->image);
+                invert_rgb(input->Get_Image());
             }else if(command == "HSB"){
-                HSB(input->image);
+                HSB(input->Get_Image());
             }else if(command == "threshold"){
-                threshold_rgb(input->image);
+                threshold_rgb(input->Get_Image());
             }
         }else if(input->Image_Channel_Count() == 1){
             if(command == "brightness"){
-                brightness_grey(input->image);
+                brightness_grey(input->Get_Image());
             }else if(command == "contrast"){
-                contrast_grey(input->image);
+                contrast_grey(input->Get_Image());
             }else if(command == "gamma"){
-                gamma_grey(input->image);
+                gamma_grey(input->Get_Image());
             }else if(command == "invert"){
-                invert_grey(input->image);
+                invert_grey(input->Get_Image());
             }else if(command == "threshold"){
-                threshold_grey(input->image);
+                threshold_grey(input->Get_Image());
             }
         }
         update_needed = false;
@@ -242,9 +242,9 @@ void ofx_Point_Processing::invert_grey(unsigned char* input){
 void ofx_Point_Processing::HSB(unsigned char* input){
     if(!filter_set){
 
-        float s_max[9]      = {360.0f   ,360.0f ,100.0f ,100.0f ,100.0f ,100.0f ,2.0f   ,2.0f   ,2.0f};
-        float s_min[9]      = {0.0f     ,0.0f   ,0.0f   ,0.0f   ,0.0f   ,0.0f   ,-1.0f   ,-1.0f   ,-1.0f};
-        string s_titles[9]  = {"Hue_Max","Hue_Min","Saturation_Max","Saturation_Min","Brightness_Max","Brightness_Min","Hue_Out","Saturation_Out","Brightness_Out"};
+        float s_max[9]      = {360.0f   ,360.0f ,2.0f   ,100.0f ,100.0f , 2.0f  ,100.0f ,100.0f ,2.0f};
+        float s_min[9]      = {0.0f     ,0.0f   ,-1.0f  ,0.0f   ,0.0f   , -1.0f ,  0.0f ,0.0f   ,-1.0f};
+        string s_titles[9]  = {"Hue_Max","Hue_Min","Hue_Out","Saturation_Max","Saturation_Min","Saturation_Out","Brightness_Max","Brightness_Min","Brightness_Out"};
 
         set_filter_sliders(s_titles, s_max, s_min, 9);
         filter_set = true;
@@ -271,9 +271,9 @@ void ofx_Point_Processing::HSB(unsigned char* input){
             if( hue < Filter_Slider._Menu_Sliders[0]->Slider_Value()
             && hue > Filter_Slider._Menu_Sliders[1]->Slider_Value() )
             {
-                resultr[0] = Filter_Slider._Menu_Sliders[6]->Slider_Value() * input[(y*object_width+x)*3 + 0]  ;
-                resultg[0] = Filter_Slider._Menu_Sliders[6]->Slider_Value()  * input[(y*object_width+x)*3 + 1]  ;
-                resultb[0] = Filter_Slider._Menu_Sliders[6]->Slider_Value()  * input[(y*object_width+x)*3 + 2]  ;
+                resultr[0] = Filter_Slider._Menu_Sliders[2]->Slider_Value() * input[(y*object_width+x)*3 + 0]  ;
+                resultg[0] = Filter_Slider._Menu_Sliders[2]->Slider_Value()  * input[(y*object_width+x)*3 + 1]  ;
+                resultb[0] = Filter_Slider._Menu_Sliders[2]->Slider_Value()  * input[(y*object_width+x)*3 + 2]  ;
 
             }
             else if((hue > Filter_Slider._Menu_Sliders[0]->Slider_Value()
@@ -281,9 +281,9 @@ void ofx_Point_Processing::HSB(unsigned char* input){
             && Filter_Slider._Menu_Sliders[0]->Slider_Value() <  Filter_Slider._Menu_Sliders[1]->Slider_Value())
 
             {
-                resultr[0] = Filter_Slider._Menu_Sliders[6]->Slider_Value() * input[(y*object_width+x)*3 + 0]  ;
-                resultg[0] = Filter_Slider._Menu_Sliders[6]->Slider_Value()  * input[(y*object_width+x)*3 + 1]  ;
-                resultb[0] = Filter_Slider._Menu_Sliders[6]->Slider_Value()  * input[(y*object_width+x)*3 + 2]  ;
+                resultr[0] = Filter_Slider._Menu_Sliders[2]->Slider_Value() * input[(y*object_width+x)*3 + 0]  ;
+                resultg[0] = Filter_Slider._Menu_Sliders[2]->Slider_Value()  * input[(y*object_width+x)*3 + 1]  ;
+                resultb[0] = Filter_Slider._Menu_Sliders[2]->Slider_Value()  * input[(y*object_width+x)*3 + 2]  ;
 
             }else{
                 resultr[0] = 0 ;
@@ -291,20 +291,20 @@ void ofx_Point_Processing::HSB(unsigned char* input){
                 resultb[0] = 0 ;
             }
 
-            if( saturation < Filter_Slider._Menu_Sliders[2]->Slider_Value()
-            &&  saturation > Filter_Slider._Menu_Sliders[3]->Slider_Value() )
+            if( saturation < Filter_Slider._Menu_Sliders[3]->Slider_Value()
+            &&  saturation > Filter_Slider._Menu_Sliders[4]->Slider_Value() )
             {
-                resultr[1] = Filter_Slider._Menu_Sliders[7]->Slider_Value() * input[(y*object_width+x)*3 + 0]  ;
-                resultg[1] = Filter_Slider._Menu_Sliders[7]->Slider_Value() * input[(y*object_width+x)*3 + 1]  ;
-                resultb[1] = Filter_Slider._Menu_Sliders[7]->Slider_Value() * input[(y*object_width+x)*3 + 2]  ;
+                resultr[1] = Filter_Slider._Menu_Sliders[5]->Slider_Value() * input[(y*object_width+x)*3 + 0]  ;
+                resultg[1] = Filter_Slider._Menu_Sliders[5]->Slider_Value() * input[(y*object_width+x)*3 + 1]  ;
+                resultb[1] = Filter_Slider._Menu_Sliders[5]->Slider_Value() * input[(y*object_width+x)*3 + 2]  ;
             }else{
                 resultr[1] = 0  ;
                 resultg[1] = 0  ;
                 resultb[1] = 0 ;
             }
 
-            if( brightness < Filter_Slider._Menu_Sliders[4]->Slider_Value()
-            &&  brightness > Filter_Slider._Menu_Sliders[5]->Slider_Value() )
+            if( brightness < Filter_Slider._Menu_Sliders[6]->Slider_Value()
+            &&  brightness > Filter_Slider._Menu_Sliders[7]->Slider_Value() )
             {
                 resultr[2] = Filter_Slider._Menu_Sliders[8]->Slider_Value() * 255  ;
                 resultg[2] = Filter_Slider._Menu_Sliders[8]->Slider_Value() * 255  ;
