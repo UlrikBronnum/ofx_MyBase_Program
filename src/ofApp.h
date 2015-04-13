@@ -12,6 +12,9 @@
 #include "ofx_Layer.h"
 #include "ofxQtVideoSaver.h"
 
+
+#include "test_runner.h"
+
 #define program_version "version_1.0"
 #define my_record FALSE
 
@@ -49,7 +52,7 @@ class ofApp : public ofBaseApp , public ofx_Loader {
         unsigned char* greyscale2rgb(unsigned char* image,int w ,int h);
 
 
-
+        test_runner lalala;
 
 		string create_time_string();
 
@@ -96,5 +99,9 @@ class ofApp : public ofBaseApp , public ofx_Loader {
 
         ofFile Log;
         string save_counter_str;
+        string startup_time_string;
+
+
+        int  user_count;
 
 };

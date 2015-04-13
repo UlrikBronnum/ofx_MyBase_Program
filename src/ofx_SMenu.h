@@ -32,6 +32,9 @@ class ofx_SMenu : public ofx_Placement
 
         //------------------------- Add Slider ------------------------------
         void reset_slider(){
+            for(int i = 0; i < _Menu_Sliders.size() ; i++){
+                delete _Menu_Sliders[i];
+            }
             _Menu_Sliders.clear();
         }
         //------------------------- Draws -----------------------------------

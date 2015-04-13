@@ -57,10 +57,13 @@ void ofx_Edge_Detection::prewitt_edge(unsigned char* input){
                     sumH+=input[(pos_y)*object_width+(pos_x)] * prewitthorisontal[fy + 1][fx + 1];
                 }
             }
+            int sum = 0;
             if(sumH > Filter_Slider._Menu_Sliders[0]->Slider_Value() || sumV > Filter_Slider._Menu_Sliders[0]->Slider_Value()){
-                image[y*object_width+x] = 255;
+                if(invert_output){sum = 255;}else{sum = 0;}
+                image[y*object_width+x] = sum;
             }else{
-                image[y*object_width+x] = 0;
+                if(invert_output){sum = 0;}else{sum = 255;}
+                image[y*object_width+x] = sum;
             }
         }
 
@@ -106,10 +109,13 @@ void ofx_Edge_Detection::sobel_edge(unsigned char* input){
                     sumH+=input[(pos_y)*object_width+(pos_x)] * sobelhorisontal[fy + 1][fx + 1];
                 }
             }
+            int sum = 0;
             if(sumH > Filter_Slider._Menu_Sliders[0]->Slider_Value() || sumV > Filter_Slider._Menu_Sliders[0]->Slider_Value()){
-                image[y*object_width+x] = 255;
+                if(invert_output){sum = 255;}else{sum = 0;}
+                image[y*object_width+x] = sum;
             }else{
-                image[y*object_width+x] = 0;
+                if(invert_output){sum = 0;}else{sum = 255;}
+                image[y*object_width+x] = sum;
             }
 
         }
@@ -118,7 +124,7 @@ void ofx_Edge_Detection::sobel_edge(unsigned char* input){
 //----------------------Filter Functions------------------------
 void ofx_Edge_Detection::laplacian_edge(unsigned char* input){
     if(!filter_set){
-        set_filter_sliders("threshold",255,0);
+        set_filter_sliders("threshold",55,-55);
         filter_set = true;
     }
     for(int y = 1; y < object_height-1 ; y++){
@@ -130,9 +136,9 @@ void ofx_Edge_Detection::laplacian_edge(unsigned char* input){
             unsigned char four = input[y * object_width + (x+1)];
             sum = (one+three) - (4 * input[(y*object_width+x)]) + two+four;
             if(sum > Filter_Slider._Menu_Sliders[0]->Slider_Value()){
-                sum = 255;
+                if(invert_output){sum = 0;}else{sum = 255;}
             }else {
-                sum = abs(sum);
+                if(invert_output){sum = 255; }else{sum = 0;}
             }
             image[y*object_width+x] = sum;
         }

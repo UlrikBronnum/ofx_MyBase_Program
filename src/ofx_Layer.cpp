@@ -1,6 +1,6 @@
 #include "ofx_Layer.h"
 
-void ofx_Layer::setup(int image_width, int image_height, int button_width, int button_height, string new_layer_type){
+void ofx_Layer::setup(int image_width, int image_height, int button_width, int button_height, string new_layer_type, bool take_prev_image){
     image_w = image_width;
     image_h = image_height;
     button_w = button_width;
@@ -8,6 +8,7 @@ void ofx_Layer::setup(int image_width, int image_height, int button_width, int b
 
     got_reference = false;
     slider_drag = false;
+    layer_take_prev = take_prev_image;
 
     layer_type = new_layer_type;
     if(layer_type == "diffuse"){
@@ -15,7 +16,7 @@ void ofx_Layer::setup(int image_width, int image_height, int button_width, int b
     }else if(layer_type == "height"){
         Base_Image.setup(image_w,image_h,"rgb");
     }else if(layer_type == "normal"){
-        Base_Image.setup(image_w,image_h,"grey");
+        Base_Image.setup(image_w,image_h,"rgb");
     }
 
     set_sub_menu(layer_type);
@@ -39,7 +40,7 @@ void ofx_Layer::reset(int image_width, int image_height){
     }else if(layer_type == "height"){
         Base_Image.setup(image_w,image_h,"rgb");
     }else if(layer_type == "normal"){
-        Base_Image.setup(image_w,image_h,"grey");
+        Base_Image.setup(image_w,image_h,"rgb");
     }
 
     for(int i = 0; i < Canvas_Storage.size();i++){
@@ -59,7 +60,7 @@ void ofx_Layer::update(unsigned char* input_image){
         hist.update(Base_Image.Get_Image(),image_w,image_h,false);
     }else if(layer_type == "normal"){
         tex_grey.loadData(Base_Image.Get_Image(),image_w,image_h,GL_LUMINANCE);
-        hist.update(Base_Image.Get_Image(),image_w,image_h,false);
+        hist.update(Base_Image.Get_Image(),image_w,image_h,true);
     }
     got_reference = true;
     for(int i = 0 ; i < Canvas_Storage.size() ; i++){
@@ -70,15 +71,27 @@ void ofx_Layer::update(){
     if(Canvas_Storage.size() > Layer_Buttons.Menu_State() && Layer_Buttons.Menu_State() != -1){
         if(Canvas_Storage.size() == 1 || Layer_Buttons.Menu_State() == 0)
         {
-            Canvas_Storage[Layer_Buttons.Menu_State()]->apply_filter(&Base_Image);
+            Canvas_Storage[0]->apply_filter(&Base_Image);
         }
         else
         {
-            for(int i = 0 ; i < Canvas_Storage.size() ; i++){
-                if(Canvas_Storage[i]->update_needed){
-                    if( i == 0){
-                        Canvas_Storage[i]->apply_filter(&Base_Image);
-                    }else{
+            if(!layer_take_prev){
+                if(Canvas_Storage[0]->update_needed)Canvas_Storage[0]->apply_filter(&Base_Image);
+                for(int i = 0 ; i < Canvas_Storage.size() ; i++){
+                    if(Canvas_Storage[i]->update_needed){
+                        if(Canvas_Storage[i]->title == "Combine"){
+                            Canvas_Storage[i]->apply_filter(Canvas_Storage,0,i);
+                        }else if(Canvas_Storage[i]->title == "Normal"){
+                            Canvas_Storage[i]->apply_filter(Canvas_Storage[i-1]);
+                        }else{
+                            Canvas_Storage[i]->apply_filter(Canvas_Storage[0]);
+                        }
+                    }
+                }
+            }else{
+                if(Canvas_Storage[0]->update_needed)Canvas_Storage[0]->apply_filter(&Base_Image);
+                for(int i = 1 ; i < Canvas_Storage.size() ; i++){
+                    if(Canvas_Storage[i]->update_needed){
                         Canvas_Storage[i]->apply_filter(Canvas_Storage[i - 1]);
                     }
                 }
@@ -97,9 +110,11 @@ void ofx_Layer::update(){
             tex_grey.loadData(Canvas_Storage[Layer_Buttons.Menu_State()]->Get_Image(),image_w,image_h,GL_LUMINANCE);
         }
     }else{
+
         hist.update(Base_Image.Get_Image(),image_w,image_h,true);
         image_grey = false;
         tex.loadData(Base_Image.Get_Image(),image_w,image_h,GL_RGB);
+
     }
 
 }
@@ -203,10 +218,10 @@ void ofx_Layer::add_Layer(string header , string filter, bool can_be_deleted){
         image_grey = true;
         newAction = true;
     }
-    if(header == "Edge_Detection"){
+    if(header == "Combine"){
         func_string << "layer_added" << "=" << filter ;
 
-        ofx_Edge_Detection* tmp = new ofx_Edge_Detection();
+        ofx_Combine_Filter* tmp = new ofx_Combine_Filter();
         tmp->setup(image_w,image_h,"grey");
         tmp->set_filter_button(button_w,button_h,filter,true);
 
@@ -221,7 +236,27 @@ void ofx_Layer::add_Layer(string header , string filter, bool can_be_deleted){
         image_grey = true;
         newAction = true;
     }
-    if(header == "Normal_map"){
+
+    if(header == "Edge_Detection"){
+        func_string << "layer_added" << "=" << filter ;
+
+        ofx_Edge_Detection* tmp = new ofx_Edge_Detection();
+        tmp->setup(image_w,image_h,"grey");
+        tmp->set_filter_button(button_w,button_h,filter,true);
+
+        Layer_Com_Buttons.add_button(" ");
+        vector<string> tmp_title = tmp->possible_commands;
+        tmp_title.push_back("invert");
+        if(can_be_deleted){tmp_title.push_back("delete");}
+        Layer_Com_Buttons.add_sub_menu(tmp_title,false,Layer_Com_Buttons.Button_Count() - 1);
+
+        Canvas_Storage.push_back(tmp);
+        Layer_Buttons.add_button(tmp->Get_Button());
+        Layer_Buttons.Menu_State(Layer_Buttons.Button_Count()-1);
+        image_grey = true;
+        newAction = true;
+    }
+    if(header == "Normal"){
         func_string << "layer_added" << "=" << filter ;
 
         ofx_Normal_Map* tmp = new ofx_Normal_Map();
@@ -297,9 +332,21 @@ void  ofx_Layer::mouse_click (int x , int y){
         if(Layer_Com_Buttons.Menu_Sub_State() != -1 )
         {
             if(Layer_Com_Buttons.Button_String() != "delete"){
-                Canvas_Storage[Layer_Com_Buttons.Menu_Main_State()]->reset_filter(Layer_Com_Buttons.Button_String());
-                Layer_Buttons.Set_Button_String(Layer_Com_Buttons.Menu_Main_State() ,Layer_Com_Buttons.Button_String());
-                log_string = "layer_change=" + Layer_Com_Buttons.Button_String() ;
+
+                if(Layer_Com_Buttons.Button_String() == "invert"){
+                    if(Canvas_Storage[Layer_Com_Buttons.Menu_Main_State()]->invert_output){
+                        Canvas_Storage[Layer_Com_Buttons.Menu_Main_State()]->invert_output = false;
+                    }else{
+                        Canvas_Storage[Layer_Com_Buttons.Menu_Main_State()]->invert_output = true;
+                    }
+
+                    Canvas_Storage[Layer_Com_Buttons.Menu_Main_State()]->update_needed = true;
+                    cout << Layer_Com_Buttons.Button_String() << endl;
+                }else{
+                    Canvas_Storage[Layer_Com_Buttons.Menu_Main_State()]->reset_filter(Layer_Com_Buttons.Button_String());
+                    Layer_Buttons.Set_Button_String(Layer_Com_Buttons.Menu_Main_State() ,Layer_Com_Buttons.Button_String());
+                    log_string = "layer_change=" + Layer_Com_Buttons.Button_String() ;
+                }
             }else{
                 log_string = "layer_deleted=" + Layer_Com_Buttons.Button_String() ;
                 delete_Layer(Layer_Com_Buttons.Menu_Main_State() );

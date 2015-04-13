@@ -11,6 +11,7 @@
 #include "ofx_Edge_Detection.h"
 #include "ofx_Greyscale.h"
 #include "ofx_Normal_Map.h"
+#include "ofx_Combine_Filter.h"
 
 #include "ofx_Menu.h"
 #include "ofx_MenuSub.h"
@@ -25,7 +26,7 @@ class ofx_Layer
             Delete_Filters ();
         }
 
-        void setup(int image_width, int image_height, int button_width, int button_height, string layer_type);
+        void setup(int image_width, int image_height, int button_width, int button_height, string layer_type, bool take_prev_image);
         void reset(int image_width, int image_height);
         void update(unsigned char* input_image);
         void update();
@@ -82,6 +83,16 @@ class ofx_Layer
             return str;
         }
 
+        int Image_Channel_Count(){
+            if(Canvas_Storage.empty()){
+                cout << Base_Image.Image_Channel_Count() << endl;
+                return Base_Image.Image_Channel_Count();
+            }else{
+                cout << Canvas_Storage[Canvas_Storage.size()-1]->Image_Channel_Count() << endl;
+                return Canvas_Storage[Canvas_Storage.size()-1]->Image_Channel_Count();
+            }
+        }
+
     protected:
 
         void Delete_Filters (){
@@ -95,7 +106,7 @@ class ofx_Layer
         {
             int menus_added = 0;
             program_menu.setup(button_w,button_h,button_w,button_h);
-            if(filter_types == "height"){
+            if(filter_types == "height" || filter_types == "normal"){
                 ofx_Point_Processing tmp;
                 program_menu.add_button(tmp.title);
                 vector <string> com = tmp.possible_commands;
@@ -115,8 +126,20 @@ class ofx_Layer
                 program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
                 menus_added++;
             }
-            if(filter_types == "height"){
+            if(filter_types == "height" || filter_types == "normal"){
                 ofx_Edge_Detection tmp;
+                program_menu.add_button(tmp.title);
+                program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
+                menus_added++;
+            }
+            if(filter_types == "normal"){
+                ofx_Normal_Map tmp;
+                program_menu.add_button(tmp.title);
+                program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
+                menus_added++;
+            }
+            if(filter_types == "normal"){
+                ofx_Combine_Filter tmp;
                 program_menu.add_button(tmp.title);
                 program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
                 menus_added++;
@@ -133,12 +156,7 @@ class ofx_Layer
                 program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
                 menus_added++;
             }
-            if(filter_types == "normal"){
-                ofx_Normal_Map tmp;
-                program_menu.add_button(tmp.title);
-                program_menu.add_sub_menu(tmp.possible_commands,false,menus_added);
-                menus_added++;
-            }
+
             */
         }
 
@@ -169,6 +187,8 @@ class ofx_Layer
         ofTexture           tex_grey;
 
         string              layer_type;
+
+        bool                layer_take_prev;
 
     private:
 };

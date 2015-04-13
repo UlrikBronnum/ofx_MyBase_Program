@@ -227,6 +227,12 @@ void ofx_Slider::draw (int x , int y , unsigned char color){
             n_y = y + object_height + object_height/1.3;
             button_string  << setprecision(4) << lower_limit << endl;
             ofDrawBitmapString(button_string.str(), n_x , n_y);
+            button_string.str("");
+            // Title
+            n_x = x + object_width/2 -  8 * title.size()/2;
+            n_y = y + object_height + object_height/1.3;
+            button_string  << setprecision(4) << Slider_Value () << endl;
+            ofDrawBitmapString(button_string.str(), n_x , n_y);
         }
     }
     ofSetColor(255);

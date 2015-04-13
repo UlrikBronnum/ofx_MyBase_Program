@@ -11,7 +11,7 @@ class ofx_Filter : public ofx_Image
 {
     public:
 
-        ofx_Filter() {}
+        ofx_Filter() {invert_output = false;}
         virtual ~ofx_Filter() {}
 
         virtual void setup(int width, int height, string image_type){
@@ -47,7 +47,7 @@ class ofx_Filter : public ofx_Image
             update_needed = true;
         }
         virtual void apply_filter(ofx_Image* input){}
-
+        virtual void apply_filter(vector<ofx_Filter*> input,int start,int fin){}
         //------------------------- Draws -----------------------------------
         virtual void draw (int slider_x , int slider_y , ofx_Color color){
             Filter_Slider.draw(slider_x,slider_y,color);
@@ -90,6 +90,8 @@ class ofx_Filter : public ofx_Image
         string          command;
 
         bool            update_needed;
+
+        bool        invert_output;
 
 
     protected:

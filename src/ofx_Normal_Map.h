@@ -10,7 +10,7 @@ class ofx_Normal_Map : public ofx_Filter
         ofx_Normal_Map(){
             possible_commands.push_back("normal");
 
-            title = "Normal_map";
+            title = "Normal";
             refs_set = false;
         }
         virtual ~ofx_Normal_Map(){

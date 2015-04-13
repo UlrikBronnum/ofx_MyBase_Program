@@ -3,9 +3,18 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+    ofFile un;
+    string usernum;
+    un.open("program_files/index.txt", ofFile::ReadOnly, false);
+    un >> usernum;
+    un.close();
+
+    user_count = ofToInt(usernum);
+
     //if(check_path("\\data\\program_files\\",true)){cout << "true" << endl;}
 
-    string startup_time_string = create_time_string();
+
+    startup_time_string = create_time_string();
     find_drives();
 
     ofFile pf;string fileContents;
@@ -20,13 +29,13 @@ void ofApp::setup(){
             save_folder_name = fileContents;
             pf << save_folder_name;
         }else{
-            save_folder_name = "image_output/" + startup_time_string;
+            save_folder_name = "image_output/" ;
             pf << save_folder_name;
         }
         pf.close();
     }else{
         pf.open("program_files/save_info.txt", ofFile::WriteOnly, false);
-        save_folder_name = "image_output/" + startup_time_string;
+        save_folder_name = "image_output/";
         pf << save_folder_name;
         pf.close();
     }
@@ -44,9 +53,12 @@ void ofApp::setup(){
 	logStr +=  startup_time_string;
     Log.open(logStr + "/log.txt", ofFile::WriteOnly, false);
     // Log version
+    Log << "User=" << user_count << endl;
     Log << program_version << endl;
     Log << return_program_path() << endl;
     Log << save_folder_name << endl;
+
+
 
     reset_layers();
 
@@ -55,15 +67,17 @@ void ofApp::setup(){
     Program_Header_System.setup();
 
     Image_Selector_Menu.setup(522/3,36,false,false);
-    Image_Selector_Menu.add_button("Diffuse",true);
-    Image_Selector_Menu.add_button("Heightmap",true);
-    Image_Selector_Menu.add_button("Normalmap",true);
+    Image_Selector_Menu.add_button("Diffuse Texture",true);
+    Image_Selector_Menu.add_button("Height Texture",true);
+    Image_Selector_Menu.add_button("Normal Texture",true);
 
     //=====================Video Recordings===============================
     Window_Width            = ofGetWidth();
     Window_Height           = ofGetHeight();
     aux_Window_Width 		= 320;	// try to grab at this size.
 	aux_Window_Height 		= 240;
+
+    lalala.setup(Window_Width,Window_Height,logStr);
 
 	ofSetFrameRate(60);
 
@@ -126,7 +140,7 @@ void ofApp::update(){
             }
             Image_Layers[1]->update();
             if(!Image_Layers[2]->got_reference){
-                Image_Layers[2]->update(Image_Layers[1]->Get_Image());
+                Image_Layers[2]->update(Image_Layers[0]->Get_Image());
             }
             Image_Layers[2]->update();
             newLog = Image_Layers[2]->Log_String();
@@ -158,26 +172,22 @@ void ofApp::update(){
                 Program_Header_System.Reset_Menu();
             }
         }
-        if(Program_Header_System.Menu_State() == 2){
-            ofExit();
-        }
-    }
-
-    if(Program_Header_System.Program_State() == 1){
-        if(Program_Header_System.Menu_State() == 0 && Program_Header_System.Sub_State() != -1){
+        if(Program_Header_System.Menu_State() == 2 && Program_Header_System.Sub_State() != -1){
             save_format = Program_Header_System.Program_String();
             Program_Header_System.Reset_Menu();
         }
-        if(Program_Header_System.Menu_State() == 1 && Program_Header_System.Sub_State() != -1){
+        if(Program_Header_System.Menu_State() == 3 && Program_Header_System.Sub_State() != -1){
             load_external_file = false;
             set_save_folder = true;
             Program_Header_System.Reset_Menu();
         }
-
+        if(Program_Header_System.Menu_State() == 4){
+            ofExit();
+        }
     }
 
 
-    if(Program_Header_System.Program_State() == 2 && Image_Selector_Menu.Menu_State() != -1){
+    if(Program_Header_System.Program_State() == 1 && Image_Selector_Menu.Menu_State() != -1){
 
         if(Program_Header_System.Menu_State() > -1 && Program_Header_System.Program_String() != ""){
             string filter_cata = Program_Header_System.Get_Button_Labels_Sub(true,Program_Header_System.Program_State(),Program_Header_System.Menu_State(),Program_Header_System.Sub_State() ) ;
@@ -187,6 +197,7 @@ void ofApp::update(){
                 Program_Header_System.Reset_Menu();
             }else if(Image_Selector_Menu.Menu_State() == 1 && Program_Header_System.Sub_State() != -1){
                 Image_Layers[1]->add_Layer(filter_cata , filter_type , true);
+                lalala.update(my_mouse_x,my_mouse_y,filter_type);
                 Program_Header_System.Reset_Menu();
             }else if(Image_Selector_Menu.Menu_State() == 2 && Program_Header_System.Sub_State() != -1) {
                 Image_Layers[2]->add_Layer(filter_cata , filter_type , true);
@@ -194,11 +205,7 @@ void ofApp::update(){
             }
         }
     }
-    if(Program_Header_System.Program_State() == 3 && Image_Selector_Menu.Menu_State() != -1){
-        if(Program_Header_System.Sub_State() != -1){
-            Program_Header_System.Reset_Menu();
-        }
-    }
+
 
     if(!save_counter_str.empty() && save_counter_str.at(save_counter_str.size()-1) == 'd'){
         if(save_counter_str.size() == 3){
@@ -213,6 +220,7 @@ void ofApp::update(){
                     if(value < 3){
                         save_counter_str = "a" + ofToString(value);
                     }else{
+                        lalala.update(my_mouse_x,my_mouse_y,"all");
                         save_counter_str = "";
                     }
                 }
@@ -243,6 +251,7 @@ void ofApp::update(){
     //------------RECORD VIDEO END---------------------------
     }
 
+    lalala.update(my_mouse_x,my_mouse_y,"");
 }
 
 //--------------------------------------------------------------
@@ -251,85 +260,93 @@ void ofApp::draw(){
     ofx_Color c;
     c.set_color(200);
 
+    lalala.draw(Window_Width,Window_Height);
+
+    if(!lalala.isRunning){
+
+        if(save_counter_str == ""){
+            if( !load_external_file && !set_save_folder &&  system_ref_image.isAllocated() ){
+
+                ofSetColor(200 - 200/5);
+                ofRect(Window_Width/2 - 520/2+1,64+36,520,520);
+                ofSetColor(255);
+                Image_Selector_Menu.draw(Window_Width/2 - 520/2 ,64,c,Window_Width,Window_Height);
+
+                ofSetColor(255);
+                if(Image_Selector_Menu.Menu_State() != -1 && Image_Selector_Menu.Menu_State() < Image_Layers.size()){
+                    Image_Layers[Image_Selector_Menu.Menu_State()]->draw(Window_Width/2 - 512/2 +1 ,64 + 36 + 4,200,Window_Width,Window_Height);
+                }
+            }else{
+                //ofSetColor(0);
+                //ofRect(0,0,Window_Width,Window_Height);
+
+                ofSetColor(255);
+                system_icons[0]->draw(Window_Width / 2 - (system_icons[0]->Width()/2),Window_Height/2 - (system_icons[0]->Height()/2) );
+                system_icons[1]->draw(Window_Width / 2 - (system_icons[1]->Width()/2),Window_Height/2 - (system_icons[1]->Height()/2 + system_icons[1]->Height()/2) - (30 * sin(3*ofGetElapsedTimef()) ));
+
+                ofSetColor(255);
+                string load_text = "";
+                if( load_external_file){
+                    load_text = "Drop file or folder";
+                    ofDrawBitmapString( load_text ,Window_Width / 2 - (load_text.size() * 8 /2),Window_Height/3 - 160);
+                    if(system_ref_image.isAllocated()){
+                        back_button.draw(Window_Width - 80, Window_Height - 50,200);
+                    }
+                }else if( set_save_folder){
+                    load_text = "Current save folder: " + save_folder_name;
+                    ofDrawBitmapString( load_text ,Window_Width / 2 - (load_text.size() * 8 /2),Window_Height/3 - 160);
+                    back_button.draw(Window_Width - 80, Window_Height - 50,200);
+                }
 
 
-    if(save_counter_str == ""){
-        if( !load_external_file && !set_save_folder &&  system_ref_image.isAllocated() ){
-
-            ofSetColor(200 - 200/5);
-            ofRect(Window_Width/2 - 520/2+1,64+36,520,520);
-            ofSetColor(255);
-            Image_Selector_Menu.draw(Window_Width/2 - 520/2 ,64,c,Window_Width,Window_Height);
-
-            ofSetColor(255);
-            if(Image_Selector_Menu.Menu_State() != -1 && Image_Selector_Menu.Menu_State() < Image_Layers.size()){
-                Image_Layers[Image_Selector_Menu.Menu_State()]->draw(Window_Width/2 - 512/2 +1 ,64 + 36 + 4,200,Window_Width,Window_Height);
             }
         }else{
-            ofSetColor(0);
-            ofRect(0,0,Window_Width,Window_Height);
-            if(system_ref_image.isAllocated()){
-                back_button.draw(Window_Width - 80, Window_Height - 50,200);
+            //ofSetColor(0);
+            //ofRect(0,0,Window_Width,Window_Height);
+            if(save_counter_str.at(0) == 's' || save_counter_str.at(0) == 'a'){
+                ofSetColor(255);
+                int val = save_counter_str.at(1)-48;
+                string load_text = "Greetings, I'm Saving ";
+                if(val == 1 || (val == 2 && Image_Layers[val]->Image_Channel_Count() == 1) ){
+                    unsigned char* convert_gray = greyscale2rgb(Image_Layers[val]->Get_Image(),512,512);
+                    system_icons[2]->load(convert_gray,512,512);
+                    load_text += "Height";
+                    delete [] convert_gray;
+                }else{
+                    system_icons[2]->load(Image_Layers[val]->Get_Image(),512,512);
+                    if(val == 0){load_text += "Diffuse";}else{load_text += "Normal";}
+                }
+
+                system_icons[2]->resize_icon(256,256);
+                system_icons[2]->draw(Window_Width / 2 - (system_icons[2]->Width()/2),Window_Height/3 - (system_icons[2]->Height()/2) );
+
+                ofSetColor(255);
+
+                ofDrawBitmapString( load_text ,Window_Width / 2 - 113,Window_Height/3 - 160);
+                save_counter_str += "d";
+            }else if(save_counter_str.at(0) == 'i' || save_counter_str.at(0) == 'f'){
+                ofSetColor(255);
+                system_icons[2]->load("placeholder.tga");
+                system_icons[2]->resize_icon(256,256);
+                system_icons[2]->draw(Window_Width / 2 - (system_icons[2]->Width()/2),Window_Height/3 - (system_icons[2]->Height()/2) );
+                ofSetColor(255);
+                string load_text = "Loading...." ;
+                ofDrawBitmapString( load_text ,Window_Width / 2 - 50,Window_Height/3 - 160);
+                save_counter_str += "d";
             }
-
-            ofSetColor(255);
-            system_icons[0]->draw(Window_Width / 2 - (system_icons[0]->Width()/2),Window_Height/2 - (system_icons[0]->Height()/2) );
-            system_icons[1]->draw(Window_Width / 2 - (system_icons[1]->Width()/2),Window_Height/2 - (system_icons[1]->Height()/2 + system_icons[1]->Height()/2) - (30 * sin(3*ofGetElapsedTimef()) ));
-
-            ofSetColor(255);
-            string load_text = "";
-            if( load_external_file){
-                load_text = "Drop file or folder";
-                ofDrawBitmapString( load_text ,Window_Width / 2 - (load_text.size() * 8 /2),Window_Height/3 - 160);
-            }else if( set_save_folder){
-                load_text = "Current save folder: " + save_folder_name;
-                ofDrawBitmapString( load_text ,Window_Width / 2 - (load_text.size() * 8 /2),Window_Height/3 - 160);
-            }
-
-
         }
-    }else{
-        ofSetColor(0);
-        ofRect(0,0,Window_Width,Window_Height);
-        if(save_counter_str.at(0) == 's' || save_counter_str.at(0) == 'a'){
-            ofSetColor(255);
-            int val = save_counter_str.at(1)-48;
-            string load_text = "Greetings, I'm Saving ";
-            if(val == 1){
-                unsigned char* convert_gray = greyscale2rgb(Image_Layers[val]->Get_Image(),512,512);
-                system_icons[2]->load(convert_gray,512,512);
-                load_text += "Height";
-                delete [] convert_gray;
-            }else{
-                system_icons[2]->load(Image_Layers[val]->Get_Image(),512,512);
-                if(val == 0){load_text += "Diffuse";}else{load_text += "Normal";}
-            }
-
-            system_icons[2]->resize_icon(256,256);
-            system_icons[2]->draw(Window_Width / 2 - (system_icons[2]->Width()/2),Window_Height/3 - (system_icons[2]->Height()/2) );
-
-            ofSetColor(255);
-
-            ofDrawBitmapString( load_text ,Window_Width / 2 - 113,Window_Height/3 - 160);
-            save_counter_str += "d";
-        }else if(save_counter_str.at(0) == 'i' || save_counter_str.at(0) == 'f'){
-            ofSetColor(255);
-            system_icons[2]->load("placeholder.tga");
-            system_icons[2]->resize_icon(256,256);
-            system_icons[2]->draw(Window_Width / 2 - (system_icons[2]->Width()/2),Window_Height/3 - (system_icons[2]->Height()/2) );
-            ofSetColor(255);
-            string load_text = "Loading...." ;
-            ofDrawBitmapString( load_text ,Window_Width / 2 - 50,Window_Height/3 - 160);
-            save_counter_str += "d";
-        }
+        //Program_Header_System draws last!!!!!!!!!!!!!!!!!!!!!!
+        Program_Header_System.draw(c,Window_Width,Window_Height);
     }
+
+
 
     ofSetColor(255);
     ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()) + "\ntime: " + ofToString(ofGetElapsedTimef()) + "\nfileformat: " + save_format ,10,Window_Height - 50);
 
-    //Program_Header_System draws last!!!!!!!!!!!!!!!!!!!!!!
 
-    Program_Header_System.draw(c,Window_Width,Window_Height);
+
+
     if(my_record){
         ofSetColor(255);
         system_icons[3]->draw(my_mouse_x - system_icons[3]->Width()/2 ,my_mouse_y - system_icons[3]->Height()/2);
@@ -360,6 +377,13 @@ void ofApp::exit(){
         delete system_icons[i];
     }
     system_icons.clear();
+
+    if(lalala.done){
+        ofFile pf;
+        pf.open("program_files/index.txt", ofFile::WriteOnly, false);
+        pf << user_count + 1 << endl;
+        pf.close();
+    }
 }
 //--------------------------------------------------------------
 void ofApp::reset_layers(){
@@ -375,20 +399,19 @@ void ofApp::reset_layers(){
     for(int i = 0; i < 3 ; i++){
         if(i == 0){
             ofx_Layer* tmp = new ofx_Layer();
-            tmp->setup(512,512,b_width,b_height,"diffuse");
+            tmp->setup(512,512,b_width,b_height,"diffuse",true);
             Image_Layers.push_back(tmp);
             save_counter.push_back(1);
-
         }else if(i == 1){
             ofx_Layer* tmp = new ofx_Layer();
-            tmp->setup(512,512,b_width,b_height,"height");
+            tmp->setup(512,512,b_width,b_height,"height",true);
             tmp->add_Layer("Greyscale" , "greyscale" , false);
             Image_Layers.push_back(tmp);
             save_counter.push_back(1);
         }else{
             ofx_Layer* tmp = new ofx_Layer();
-            tmp->setup(512,512,b_width,b_height,"normal");
-            tmp->add_Layer("Normal_map" , "normal" , false);
+            tmp->setup(512,512,b_width,b_height,"normal",false);
+            tmp->add_Layer("Greyscale" , "greyscale" , false);
             Image_Layers.push_back(tmp);
             save_counter.push_back(1);
         }
@@ -425,6 +448,8 @@ void ofApp::mouseMoved(int x, int y ){
             Image_Layers[Image_Selector_Menu.Menu_State()]->mouse_hover(x,y);
         }
     }
+
+    lalala.mouse_hover(x,y);
 }
 
 //--------------------------------------------------------------
@@ -436,27 +461,35 @@ void ofApp::mouseDragged(int x, int y, int button){
 
     if(Image_Selector_Menu.Menu_State() > -1 && Image_Selector_Menu.Menu_State() < 3){
         Image_Layers[Image_Selector_Menu.Menu_State()]->mouse_drag(x,y);
+        if(Image_Layers[Image_Selector_Menu.Menu_State()]->slider_drag){
+            lalala.update(my_mouse_x,my_mouse_y,"drag");
+        }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
 
+    lalala.mouse_click(x,y);
 
     if(Program_Header_System.mouse_click(x,y)){
         string input = Program_Header_System.Get_Button_Label();
         if(input != ""){
+
             system_log_string = "program_input=" + input;
             Log << system_log_string << endl;
-            cout << system_log_string << endl;
+            cout  <<system_log_string << endl;
         }else{
+
             input = Program_Header_System.Program_String();
+
             if(input != ""){
                 system_log_string = "program_input=" + input;
                 Log << system_log_string << endl;
                 cout << system_log_string << endl;
             }
         }
+
         if(Program_Header_System.Menu_State() == -1 && Program_Header_System.Program_State() == 0 ){Program_Header_System.replace_load_menu();cout << "replace" << endl;}
     }
     if(Program_Header_System.Program_State() == -1){
@@ -467,14 +500,17 @@ void ofApp::mousePressed(int x, int y, int button){
                 Log << system_log_string << endl;
                 cout << system_log_string << endl;
                 if(image_selected == 0){
+                    lalala.update(my_mouse_x,my_mouse_y,"diffuse");
                     Program_Header_System.Set_Sub_Menu(Image_Layers[0]->Get_Program_Menu());
                     Image_Layers[1]->got_reference = false;
                     Image_Layers[2]->got_reference = false;
                 }else if(image_selected == 1){
+                    lalala.update(my_mouse_x,my_mouse_y,"height");
                     Image_Layers[1]->got_reference = false;
                     Program_Header_System.Set_Sub_Menu(Image_Layers[1]->Get_Program_Menu());
                     Image_Layers[2]->got_reference = false;
                 }else if(image_selected == 2){
+                    lalala.update(my_mouse_x,my_mouse_y,"normal");
                     Program_Header_System.Set_Sub_Menu(Image_Layers[2]->Get_Program_Menu());
                 }
             }
@@ -482,7 +518,7 @@ void ofApp::mousePressed(int x, int y, int button){
     }
 
 
-    if( (load_external_file || set_save_folder) && system_ref_image.isAllocated()){
+    if( set_save_folder || (load_external_file && system_ref_image.isAllocated()) ){
         if(back_button.mouse_click(x,y)){
             load_external_file = false;
             set_save_folder = false;
@@ -493,8 +529,6 @@ void ofApp::mousePressed(int x, int y, int button){
         }
     }
 
-
-
     cout << "program_state: " << Program_Header_System.Program_State() << endl;
     cout << "menu_state: " << Program_Header_System.Menu_State() << endl;
     cout << "sub_state: " << Program_Header_System.Sub_State() << endl;
@@ -503,7 +537,7 @@ void ofApp::mousePressed(int x, int y, int button){
     cout << "load setting: " << load_external_file << endl;
     cout << "-----------------------------------------\n" << endl;
 
-
+    lalala.update(my_mouse_x,my_mouse_y,Program_Header_System.Program_String());
 }
 
 //--------------------------------------------------------------
@@ -562,7 +596,8 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
         Log << "dragInfo_savefolder=" << save_folder_name << endl;
 
-        set_save_folder = false;
+        lalala.update(my_mouse_x,my_mouse_y,"folder");
+        //set_save_folder = false;
     }
 }
 
@@ -658,7 +693,7 @@ void ofApp::load_dragInfo_folder(string foldername){
                 unsigned found = file_name.find_last_of('.');
                 string file_format = file_name.substr(found+1);
                 if(found){
-                    if(file_format == "jpg" || file_format == "JPG"
+                    if(file_format == "jpg" || file_format == "JPG" || file_format == "JPEG"
                        || file_format == "png"
                        || file_format == "tga"
                        || file_format == "tiff" )
@@ -713,7 +748,7 @@ void ofApp::find_drives(){
 }
 void ofApp::load_image(string filename){
 
-    if(!Image_Layers.empty()){reset_layers();}
+    if(!Image_Layers.empty()){reset_layers();startup_time_string = create_time_string();}
     // Filename and button tittle is the same so...
     string format = filename;
     string::size_type n;
@@ -734,13 +769,17 @@ void ofApp::load_image(string filename){
     Program_Header_System.Set_Sub_Menu(Image_Layers[0]->Get_Program_Menu());
     Log << "image_selected=" << Image_Selector_Menu.Menu_State() << endl;
     Image_Layers[0]->update(system_ref_image.getPixels());
+
     Image_Layers[1]->update(Image_Layers[0]->Get_Image());
     Image_Layers[1]->update();
-    Image_Layers[2]->update(Image_Layers[1]->Get_Image());
+
+    Image_Layers[2]->update(Image_Layers[0]->Get_Image());
     Image_Layers[2]->update();
     system_log_string = "file_loaded=" + load_file;
     Log << system_log_string << endl;
     load_external_file = false;
+
+    lalala.update(my_mouse_x,my_mouse_y,"load");
 }
 //--------------------------------------------------------------
 void ofApp::save_image(int layer_number){
@@ -759,16 +798,35 @@ void ofApp::save_image(int layer_number){
     cout << save_name << endl;
 
     string filename = "";
-    if(layer_number == 0){
-        filename = "/" + save_name + "_diff";
-        system_ref_image.setFromPixels(create_diffuse(tmp_image.getPixels(), w,h), w,h , OF_IMAGE_COLOR,true);
-    }else if(layer_number == 1){
-        filename = "/" + save_name + "_height";
-        system_ref_image.setFromPixels( greyscale2rgb( create_height ( create_diffuse (tmp_image.getPixels(), w,h), w,h),w ,h), w,h , OF_IMAGE_COLOR,false);
-    }else if(layer_number == 2){
-        filename = "/" + save_name + "_norm";
-        system_ref_image.setFromPixels(create_normal(create_height ( create_diffuse (tmp_image.getPixels(), w,h), w,h), w,h) , w,h , OF_IMAGE_COLOR,true);
+    unsigned char* tmp_save_image = new unsigned char[w * h * 3];
+
+    if(layer_number == 0)
+    {
+        filename = "/" + save_name + "_" + startup_time_string + "/" + save_name + "_diff";
+        tmp_save_image = create_diffuse(tmp_image.getPixels(), w,h);
+        system_ref_image.setFromPixels(tmp_save_image , w,h , OF_IMAGE_COLOR,true);
     }
+    else if(layer_number == 1)
+    {
+        filename = "/" + save_name + "_" + startup_time_string + "/" + save_name + "_height";
+        tmp_save_image = greyscale2rgb( create_height ( create_diffuse (tmp_image.getPixels(), w,h), w,h),w ,h);
+        system_ref_image.setFromPixels(tmp_save_image , w,h , OF_IMAGE_COLOR,false);
+    }
+    else if(layer_number == 2)
+    {
+        filename = "/" + save_name + "_" + startup_time_string + "/" + save_name +  "_norm";
+        if(Image_Layers[layer_number]->Image_Channel_Count() == 3){
+            cout << "rgb" << endl;
+            tmp_save_image = create_normal(create_diffuse (tmp_image.getPixels(), w,h), w,h);
+            system_ref_image.setFromPixels(tmp_save_image , w,h , OF_IMAGE_COLOR,true);
+        }else if(Image_Layers[layer_number]->Image_Channel_Count() == 1){
+            cout << "grey" << endl;
+            tmp_save_image = greyscale2rgb( create_normal(create_diffuse (tmp_image.getPixels(), w,h), w,h) , w,h);
+            system_ref_image.setFromPixels(tmp_save_image , w,h , OF_IMAGE_COLOR,false);
+        }
+
+    }
+
 
     ofPixels pix = system_ref_image.getPixelsRef();
     string destination =  save_folder_name + filename + ofToString(save_counter[layer_number]) + save_format;
@@ -781,12 +839,19 @@ void ofApp::save_image(int layer_number){
     cout << "File saved!" << endl;
     newFile.close();
     cout << "File closed!" << endl;
-
+    cout << 0 <<endl;
     system_ref_image.loadImage(filename_of_reference);
     system_ref_image.resize(512,512);
+    cout << 1 <<endl;
     w = system_ref_image.getWidth();
     h = system_ref_image.getHeight();
-    create_normal(create_height ( create_diffuse (system_ref_image.getPixels(), w,h), w,h), w,h);
+    cout << 2 <<endl;
+    create_height( create_diffuse (system_ref_image.getPixels(), w,h), w,h);
+    cout << 3 <<endl;
+    create_normal( create_diffuse (system_ref_image.getPixels(), w,h), w,h);
+    cout << 4 <<endl;
+    delete [] tmp_save_image;
+    cout << 5 <<endl;
 }
 //--------------------------------------------------------------
 unsigned char* ofApp::create_diffuse(unsigned char* image ,int w ,int h ){

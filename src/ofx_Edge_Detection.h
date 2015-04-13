@@ -12,6 +12,8 @@ class ofx_Edge_Detection : public ofx_Filter
             possible_commands.push_back("laplacian_edge");
 
             title = "Edge_Detection";
+
+
         }
         virtual ~ofx_Edge_Detection(){}
 
@@ -20,6 +22,8 @@ class ofx_Edge_Detection : public ofx_Filter
         void sobel_edge(unsigned char* input);
         void prewitt_edge(unsigned char* input);
         void laplacian_edge(unsigned char* input);
+
+
 
     protected:
     private:

@@ -56,8 +56,8 @@ class ofx_App : public ofx_Loader , public ofx_Placement
         string Get_Button_Label(){
             if(program_state != -1 && menu_state == -1 && sub_state == -1){
                 return Program_Menu.Button_String(program_state);
-            }else if(program_state != -1 && menu_state != -1 || sub_state != -1) {
-                return _Program_Menu_Content[menu_state]->Button_String();
+            }else if(program_state != -1 && (menu_state != -1 || sub_state != -1) ) {
+                return _Program_Menu_Content[program_state]->Button_String();
             }else {
                 return "";
             }
@@ -74,7 +74,7 @@ class ofx_App : public ofx_Loader , public ofx_Placement
             return tmp;
         }
         void Set_Sub_Menu(ofx_MenuSub* newMenu){
-            _Program_Menu_Content[2] = newMenu;
+            _Program_Menu_Content[1] = newMenu;
         }
         void Reset_Menu(){
             Program_Menu.Reset_Menu();

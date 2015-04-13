@@ -140,6 +140,8 @@
 		<Unit filename="src/ofx_Canvas.cpp" />
 		<Unit filename="src/ofx_Canvas.h" />
 		<Unit filename="src/ofx_Color.h" />
+		<Unit filename="src/ofx_Combine_Filter.cpp" />
+		<Unit filename="src/ofx_Combine_Filter.h" />
 		<Unit filename="src/ofx_Edge_Detection.cpp" />
 		<Unit filename="src/ofx_Edge_Detection.h" />
 		<Unit filename="src/ofx_Filter.h" />
@@ -169,6 +171,10 @@
 		<Unit filename="src/ofx_SMenu.h" />
 		<Unit filename="src/ofx_Slider.cpp" />
 		<Unit filename="src/ofx_Slider.h" />
+		<Unit filename="src/test_questionnaire.cpp" />
+		<Unit filename="src/test_questionnaire.h" />
+		<Unit filename="src/test_runner.cpp" />
+		<Unit filename="src/test_runner.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
